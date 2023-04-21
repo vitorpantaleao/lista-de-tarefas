@@ -11,7 +11,7 @@
 
             <form @submit.prevent="addTodo">
                 <h4>Nome da tarefa:</h4>
-                <input type="text" placeholder="ex: criar um App de Tarefas em VueJS" v-model="input_content" />
+                <input type="text" placeholder="ex: criar um App de Tarefas em VueJS" v-model="input_name" />
                 <h4>Descrição:</h4>
                 <input type="text" placeholder="ex: Criar um app de tarefas usando o VueJS 3 e Pinia, usando boas ..." v-model="input_description" />
                 <h4>Escolha uma categoria</h4>
@@ -46,11 +46,12 @@
                     </label>
 
                     <div class="todo-content">
-                        <input type="text" v-model="todo.content" />
+                        <input type="text" v-model="todo.name" />
+                        <p>{{ todo.description.substring(0, 90) }}...</p>
                     </div>
 
                     <div class="actions">
-                        <router-link :to="'/editar/' + todo.content" class="edit">
+                        <router-link :to="'/editar/' + todo.id" class="edit" v-show="!todo.done">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
@@ -67,11 +68,14 @@
 
 <script setup>
     import { ref, onMounted, computed, watch } from 'vue'
+    import { useUserStore } from '../store/UserStore'
 
-    const todos = ref([])
+    const userStore = useUserStore()
+
     const name = ref('')
+    const todos = ref(JSON.parse(localStorage.getItem('todos')) || [])
 
-    const input_content = ref('')
+    const input_name = ref('')
     const input_description = ref('')
     const input_category = ref(null)
 
@@ -82,19 +86,20 @@
 
     // adicionando um todo
     const addTodo = () => {
-        if (input_content.value.trim() === '' || input_description.value.trim() === '' || input_category.value === null) {
+        if (input_name.value.trim() === '' || input_description.value.trim() === '' || input_category.value === null) {
             return
         }
         
         todos.value.push({
-            content: input_content.value,
+            id: todos.value.length + 1,
+            name: input_name.value,
             description: input_description.value,
             category: input_category.value,
             done: false,
             created_at: new Date().getTime()
         })
 
-        input_content.value = ''
+        input_name.value = ''
         input_description.value = ''
         input_category.value = null
     }
@@ -109,6 +114,7 @@
 
     watch(name, (newVal) => {
         localStorage.setItem('name', newVal)
+        userStore.setName(newVal)
     })
 
     onMounted(() => {

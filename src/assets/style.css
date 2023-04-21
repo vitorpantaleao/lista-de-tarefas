@@ -22,7 +22,7 @@
 	font-family: 'montserrat', sans-serif;
 }
 
-#app {
+.app {
     max-width: 50vw;
     margin: 0 auto;
 }
@@ -210,9 +210,15 @@ input:checked ~ .bubble::after {
 	flex: 1 1 0%;
 }
 
+.todo-content p {
+	color: var(--dark);
+	font-size: .9rem;
+}
+
 .todo-item .todo-content input {
 	color: var(--dark);
 	font-size: 1.125rem;
+	font-weight: 600;
 }
 
 .todo-item .actions {
