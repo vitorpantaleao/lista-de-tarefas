@@ -41,7 +41,7 @@
             <div class="list">
                 <div :class="`todo-item ${todo.done && 'done'}`" v-for="todo in todos_asc" :key="todo">
                     <label>
-                        <input type="checkbox" v-model="todo.done" />
+                        <input type="checkbox" v-model="todo.done" @input="todoChanged($event)" />
                         <span :class="`bubble ${todo.category}`"></span>
                     </label>
 
@@ -69,8 +69,10 @@
 <script setup>
     import { ref, onMounted, computed, watch } from 'vue'
     import { useUserStore } from '../store/UserStore'
+    import { useToast } from "vue-toastification"
 
     const userStore = useUserStore()
+    const toast = useToast()
 
     const name = ref('')
     const todos = ref(JSON.parse(localStorage.getItem('todos')) || [])
@@ -102,10 +104,13 @@
         input_name.value = ''
         input_description.value = ''
         input_category.value = null
+
+        toast.success("Tarefa adicionada com sucesso!")
     }
 
     const removeTodo = todo => {
         todos.value = todos.value.filter(t => t !== todo)
+        toast.success("Tarefa removida com sucesso!")
     }
 
     watch(todos, newVal => {
@@ -121,4 +126,12 @@
         name.value = localStorage.getItem('name') || ''
         todos.value = JSON.parse(localStorage.getItem('todos')) || []
     })
+
+    const todoChanged = (e) => {
+        if (e.target.checked) {
+            toast.success("Tarefa concluída com sucesso!")
+        } else {
+            toast.success("Tarefa reaberta com sucesso!")
+        }
+    }
 </script>

@@ -41,6 +41,7 @@
 
 <script>
     import { useUserStore } from '../store/UserStore'
+    import { useToast } from "vue-toastification"
 
     export default {
         name: 'Editar',
@@ -53,6 +54,7 @@
                 input_category: null,
                 todos: [],
                 paramsId: null,
+                toast: useToast()
             }
         },
 
@@ -84,6 +86,9 @@
 
                 // salva no localStorage
                 localStorage.setItem('todos', JSON.stringify(this.todos))
+
+                // mostra o toast
+                this.toast.success('Tarefa editada com sucesso!')
 
                 // redireciona para a página de listagem
                 this.$router.push('/')
