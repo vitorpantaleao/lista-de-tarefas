@@ -34,6 +34,7 @@
                 </div>
                 <input type="submit" value="Salvar Tarefa" />
             </form>
+            <router-link to="/" class="cancel">Voltar</router-link>
         </section>
     </main>
 </template>
