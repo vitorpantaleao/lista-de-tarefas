@@ -5,7 +5,7 @@ const Editar = import ('../views/Editar.vue')
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
-    { path: '/editar', name: 'Editar', component: Editar },
+    { path: '/editar/:nome', name: 'Editar', component: Editar },
 ]
 
 const router = createRouter({

@@ -35,6 +35,33 @@
                 <input type="submit" value="Criar Tarefa" />
             </form>
         </section>
+
+        <section class="todo-list">
+            <h3>Tarefas Criadas</h3>
+            <div class="list">
+                <div :class="`todo-item ${todo.done && 'done'}`" v-for="todo in todos_asc" :key="todo">
+                    <label>
+                        <input type="checkbox" v-model="todo.done" />
+                        <span :class="`bubble ${todo.category}`"></span>
+                    </label>
+
+                    <div class="todo-content">
+                        <input type="text" v-model="todo.content" />
+                    </div>
+
+                    <div class="actions">
+                        <router-link :to="'/editar/' + todo.content" class="edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                            </svg>
+                            Editar
+                        </router-link>
+                        <button class="delete" @click="removeTodo(todo)">Remover</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 </template>
 
@@ -47,6 +74,11 @@
     const input_content = ref('')
     const input_description = ref('')
     const input_category = ref(null)
+
+    // obtendo os todos em ordem decrescente
+    const todos_asc = computed(() => todos.value.sort((a, b) => {
+        return b.created_at - a.created_at
+    }))
 
     // adicionando um todo
     const addTodo = () => {
@@ -66,4 +98,21 @@
         input_description.value = ''
         input_category.value = null
     }
+
+    const removeTodo = todo => {
+        todos.value = todos.value.filter(t => t !== todo)
+    }
+
+    watch(todos, newVal => {
+        localStorage.setItem('todos', JSON.stringify(newVal))
+    }, { deep: true })
+
+    watch(name, (newVal) => {
+        localStorage.setItem('name', newVal)
+    })
+
+    onMounted(() => {
+        name.value = localStorage.getItem('name') || ''
+        todos.value = JSON.parse(localStorage.getItem('todos')) || []
+    })
 </script>
